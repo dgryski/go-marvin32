@@ -38,15 +38,15 @@ loop_end:
 	JEQ sw1
 sw3:
 	SHLL $8, DI
-	BYTE $0x0F; BYTE $0xB6; BYTE $0x51; BYTE $0x02 // MOVZX edx, byte [rcx + 2]
+	MOVBLZX 2(CX), DX
 	ORL DX, DI
 sw2:
 	SHLL $8, DI
-	BYTE $0x0F; BYTE $0xB6; BYTE $0x51; BYTE $0x01 // MOVZX edx, byte [rcx + 1]
+	MOVBLZX 1(CX), DX
 	ORL DX, DI
 sw1:
 	SHLL $8, DI
-	BYTE $0x0F; BYTE $0xB6; BYTE $0x11 // MOVZX edx, byte [rcx]
+	MOVBLZX 0(CX), DX
 	ORL DX, DI
 after:
 	ADDL DI, AX
