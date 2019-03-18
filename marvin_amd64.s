@@ -26,7 +26,7 @@ loop_begin:
 	ROLL $0x13, CX
 	ADDQ $0x04, BX
 	SUBQ $0x04, BP
-	CMPQ BP, $0x00000004
+	CMPQ BP, $0x04
 	JGE  loop_begin
 
 loop_end:

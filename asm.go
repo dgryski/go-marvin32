@@ -12,16 +12,16 @@ func update(lo, hi, v Register) {
 	ADDL(v, lo)
 	XORL(lo, hi)
 
-	ROLL(U8(20), lo)
+	ROLL(Imm(20), lo)
 	ADDL(hi, lo)
 
-	ROLL(U8(9), hi)
+	ROLL(Imm(9), hi)
 	XORL(lo, hi)
 
-	ROLL(U8(27), lo)
+	ROLL(Imm(27), lo)
 	ADDL(hi, lo)
 
-	ROLL(U8(19), hi)
+	ROLL(Imm(19), hi)
 }
 
 func main() {
@@ -37,7 +37,7 @@ func main() {
 	Load(Param("seed"), t)
 
 	MOVL(t.As32(), reg_lo)
-	SHRQ(U8(32), t)
+	SHRQ(Imm(32), t)
 	MOVL(t.As32(), reg_hi)
 
 	reg_d := Load(Param("data").Base(), GP64())
@@ -53,7 +53,7 @@ func main() {
 	update(reg_lo, reg_hi, reg_k1)
 	ADDQ(Imm(4), reg_d)
 	SUBQ(Imm(4), reg_d_len)
-	CMPQ(reg_d_len, U32(4))
+	CMPQ(reg_d_len, Imm(4))
 	JGE(LabelRef(loop_begin))
 	Label(loop_end)
 
@@ -80,17 +80,17 @@ func main() {
 	reg_b := GP32()
 
 	Label(sw3)
-	SHLL(U8(8), reg_k1)
+	SHLL(Imm(8), reg_k1)
 	MOVBLZX(Mem{Base: reg_d, Disp: 2}, reg_b)
 	ORL(reg_b, reg_k1)
 
 	Label(sw2)
-	SHLL(U8(8), reg_k1)
+	SHLL(Imm(8), reg_k1)
 	MOVBLZX(Mem{Base: reg_d, Disp: 1}, reg_b)
 	ORL(reg_b, reg_k1)
 
 	Label(sw1)
-	SHLL(U8(8), reg_k1)
+	SHLL(Imm(8), reg_k1)
 	MOVBLZX(Mem{Base: reg_d, Disp: 0}, reg_b)
 	ORL(reg_b, reg_k1)
 
