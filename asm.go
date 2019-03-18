@@ -8,8 +8,11 @@ import (
 	. "github.com/mmcloughlin/avo/reg"
 )
 
-func update(lo, hi, v Register) {
-	ADDL(v, lo)
+func update(lo, hi, v Op) {
+
+	if r, ok := v.(Register); ok {
+		ADDL(r, lo)
+	}
 	XORL(lo, hi)
 
 	ROLL(Imm(20), lo)
@@ -98,7 +101,7 @@ func main() {
 
 	update(reg_lo, reg_hi, reg_k1)
 	XORL(reg_k1, reg_k1)
-	update(reg_lo, reg_hi, reg_k1)
+	update(reg_lo, reg_hi, Imm(0))
 
 	XORL(reg_hi, reg_lo)
 

@@ -66,7 +66,6 @@ after:
 	ADDL CX, AX
 	ROLL $0x13, CX
 	XORL DX, DX
-	ADDL DX, AX
 	XORL AX, CX
 	ROLL $0x14, AX
 	ADDL CX, AX
