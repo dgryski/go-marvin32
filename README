@@ -6,7 +6,7 @@ This hash function is patented by Microsoft: https://www.google.com/patents/US20
 
 The original source code is available under the MIT license,
 
-    https://github.com/dotnet/coreclr/blob/master/src/vm/marvin32.cpp
+    https://github.com/dotnet/coreclr/blob/v1.0.0/src/vm/marvin32.cpp
 
 but the patent grant appears to only cover the algorithm's use as part of the
 .NET runtime:
