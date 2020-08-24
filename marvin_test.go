@@ -1,6 +1,7 @@
 package marvin32
 
 import (
+	"strconv"
 	"testing"
 )
 
@@ -49,4 +50,28 @@ func TestMarvin(t *testing.T) {
 			t.Errorf("Sum32(%s) = 0x%x want 0x%x", g.in, sum, g.out)
 		}
 	}
+}
+
+var res32 uint32
+
+// 256-bytes random string
+var buf = make([]byte, 8192)
+
+var sizes = []int{8, 16, 32, 40, 60, 64, 72, 80, 100, 150, 200, 250, 512, 1024, 8192}
+
+func BenchmarkHash(b *testing.B) {
+	var r uint32
+
+	for _, n := range sizes {
+		b.Run(strconv.Itoa(n), func(b *testing.B) {
+			b.SetBytes(int64(n))
+			for i := 0; i < b.N; i++ {
+				// record the result to prevent the compiler eliminating the function call
+				r = Sum32(0, buf[:n])
+			}
+			// store the result to a package level variable so the compiler cannot eliminate the Benchmark itself
+			res32 = r
+		})
+	}
+
 }
