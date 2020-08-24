@@ -4,38 +4,44 @@ package marvin32
 
 import "math/bits"
 
-type marvin struct {
-	lo, hi uint32
-}
-
-func (m *marvin) update(v uint32) {
-	m.lo += v
-	m.hi ^= m.lo
-	m.lo = bits.RotateLeft32(m.lo, 20) + m.hi
-	m.hi = bits.RotateLeft32(m.hi, 9) ^ m.lo
-	m.lo = bits.RotateLeft32(m.lo, 27) + m.hi
-	m.hi = bits.RotateLeft32(m.hi, 19)
-}
-
 func Sum32(seed uint64, data []byte) uint32 {
-	var m marvin
 
-	m.lo = uint32(seed)
-	m.hi = uint32(seed >> 32)
+	lo := uint32(seed)
+	hi := uint32(seed >> 32)
 
 	for len(data) >= 8 {
 		k1 := uint32(data[0]) | uint32(data[1])<<8 | uint32(data[2])<<16 | uint32(data[3])<<24
-		m.update(k1)
+
+		lo += k1
+		hi ^= lo
+		lo = bits.RotateLeft32(lo, 20) + hi
+		hi = bits.RotateLeft32(hi, 9) ^ lo
+		lo = bits.RotateLeft32(lo, 27) + hi
+		hi = bits.RotateLeft32(hi, 19)
 
 		k1 = uint32(data[4]) | uint32(data[5])<<8 | uint32(data[6])<<16 | uint32(data[7])<<24
-		m.update(k1)
+
+		lo += k1
+		hi ^= lo
+		lo = bits.RotateLeft32(lo, 20) + hi
+		hi = bits.RotateLeft32(hi, 9) ^ lo
+		lo = bits.RotateLeft32(lo, 27) + hi
+		hi = bits.RotateLeft32(hi, 19)
+
 		data = data[8:]
 
 	}
 
 	if len(data) >= 4 {
 		k1 := uint32(data[0]) | uint32(data[1])<<8 | uint32(data[2])<<16 | uint32(data[3])<<24
-		m.update(k1)
+
+		lo += k1
+		hi ^= lo
+		lo = bits.RotateLeft32(lo, 20) + hi
+		hi = bits.RotateLeft32(hi, 9) ^ lo
+		lo = bits.RotateLeft32(lo, 27) + hi
+		hi = bits.RotateLeft32(hi, 19)
+
 		data = data[4:]
 	}
 
@@ -54,8 +60,19 @@ func Sum32(seed uint64, data []byte) uint32 {
 		final = (final << 8) | uint32(data[0])
 	}
 
-	m.update(final)
-	m.update(0)
+	lo += final
+	hi ^= lo
+	lo = bits.RotateLeft32(lo, 20) + hi
+	hi = bits.RotateLeft32(hi, 9) ^ lo
+	lo = bits.RotateLeft32(lo, 27) + hi
+	hi = bits.RotateLeft32(hi, 19)
 
-	return m.lo ^ m.hi
+	lo += 0
+	hi ^= lo
+	lo = bits.RotateLeft32(lo, 20) + hi
+	hi = bits.RotateLeft32(hi, 9) ^ lo
+	lo = bits.RotateLeft32(lo, 27) + hi
+	hi = bits.RotateLeft32(hi, 19)
+
+	return lo ^ hi
 }
