@@ -46,18 +46,19 @@ func Sum32(seed uint64, data []byte) uint32 {
 	}
 
 	/* pad the final 0-3 bytes with 0x80 */
-	final := uint32(0x80)
+
+	var final uint32
 
 	switch len(data) {
 
 	case 3:
-		final = (final << 8) | uint32(data[2])
-		fallthrough
+		final = (0x80 << 24) | uint32(data[2])<<16 | uint32(data[1])<<8 | uint32(data[0])
 	case 2:
-		final = (final << 8) | uint32(data[1])
-		fallthrough
+		final = (0x80 << 16) | uint32(data[1])<<8 | uint32(data[0])
 	case 1:
-		final = (final << 8) | uint32(data[0])
+		final = (0x80 << 8) | uint32(data[0])
+	case 0:
+		final = 0x80
 	}
 
 	lo += final
