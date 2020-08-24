@@ -2,22 +2,19 @@
 
 package marvin32
 
+import "math/bits"
+
 type marvin struct {
 	lo, hi uint32
-}
-
-// rotate x left by r bits
-func rotl32(x uint32, r uint32) uint32 {
-	return (x << r) | (x >> (32 - r))
 }
 
 func (m *marvin) update(v uint32) {
 	m.lo += v
 	m.hi ^= m.lo
-	m.lo = rotl32(m.lo, 20) + m.hi
-	m.hi = rotl32(m.hi, 9) ^ m.lo
-	m.lo = rotl32(m.lo, 27) + m.hi
-	m.hi = rotl32(m.hi, 19)
+	m.lo = bits.RotateLeft32(m.lo, 20) + m.hi
+	m.hi = bits.RotateLeft32(m.hi, 9) ^ m.lo
+	m.lo = bits.RotateLeft32(m.lo, 27) + m.hi
+	m.hi = bits.RotateLeft32(m.hi, 19)
 }
 
 func Sum32(seed uint64, data []byte) uint32 {
