@@ -23,7 +23,17 @@ func Sum32(seed uint64, data []byte) uint32 {
 	m.lo = uint32(seed)
 	m.hi = uint32(seed >> 32)
 
-	for len(data) >= 4 {
+	for len(data) >= 8 {
+		k1 := uint32(data[0]) | uint32(data[1])<<8 | uint32(data[2])<<16 | uint32(data[3])<<24
+		m.update(k1)
+
+		k1 = uint32(data[4]) | uint32(data[5])<<8 | uint32(data[6])<<16 | uint32(data[7])<<24
+		m.update(k1)
+		data = data[8:]
+
+	}
+
+	if len(data) >= 4 {
 		k1 := uint32(data[0]) | uint32(data[1])<<8 | uint32(data[2])<<16 | uint32(data[3])<<24
 		m.update(k1)
 		data = data[4:]
