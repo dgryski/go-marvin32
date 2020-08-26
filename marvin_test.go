@@ -1,53 +1,72 @@
 package marvin32
 
 import (
+	"encoding/hex"
 	"strconv"
 	"testing"
 )
 
-// This table was generated from reference C implementation
-var goldenMarvin = []struct {
-	out uint32
-	in  string
-}{
-	{0xf7f2c954, ""},
-	{0xd46e71f7, "a"},
-	{0xb40c651c, "ab"},
-	{0x5b3bc23d, "abc"},
-	{0x6b15e57b, "abcd"},
-	{0x601e6ea8, "abcde"},
-	{0xfc18bd2c, "abcdef"},
-	{0x79b01bfb, "abcdefg"},
-	{0x54793238, "abcdefgh"},
-	{0xebf98191, "abcdefghi"},
-	{0x68a8001d, "abcdefghij"},
-	{0x659105c1, "Discard medicine more than two years old."},
-	{0xb98b31d, "He who has a shady past knows that nice guys finish last."},
-	{0xbae17c9a, "I wouldn't marry him with a ten foot pole."},
-	{0x9a299f69, "Free! Free!/A trip/to Mars/for 900/empty jars/Burma Shave"},
-	{0xb463d704, "The days of the digital watch are numbered.  -Tom Stoppard"},
-	{0xe6059c5f, "Nepal premier won't resign."},
-	{0xbdd4f772, "For every action there is an equal and opposite government program."},
-	{0x12af7ede, "His money is twice tainted: 'taint yours and 'taint mine."},
-	{0x1e9cae8, "There is no reason for any individual to have a computer in their home. -Ken Olsen, 1977"},
-	{0xcb683e33, "It's a tiny change to the code and not completely disgusting. - Bob Manchek"},
-	{0x2074fbfa, "size:  a.out:  bad magic"},
-	{0x52abb615, "The major problem is with sendmail.  -Mark Horton"},
-	{0x5a509711, "Give me a rock, paper and scissors and I will move the world.  CCFestoon"},
-	{0xf97f5273, "If the enemy is within range, then so are you."},
-	{0x494c0cb, "It's well we cannot hear the screams/That we create in others' dreams."},
-	{0x7150a3c0, "You remind me of a TV show, but that's all right: I watch it anyway."},
-	{0xc5f56430, "C is as portable as Stonehedge!!"},
-	{0x712bcf01, "Even if I could be Shakespeare, I think I should still choose to be Faraday. - A. Huxley"},
-	{0xedd44de6, "The fugacity of a constituent in a mixture of gases at a given temperature is proportional to its mole fraction.  Lewis-Randall Rule"},
-	{0xd9440105, "How can you write a big system without C++?  -Paul Glick"},
-}
+func TestDotNetRuntime(t *testing.T) {
+	// Tests from https://github.com/dotnet/runtime/blob/master/src/libraries/Common/tests/Tests/System/MarvinTests.cs
 
-func TestMarvin(t *testing.T) {
-	for _, g := range goldenMarvin {
-		sum := Sum32(0x5D70D359C498B3F8, []byte(g.in))
-		if sum != g.out {
-			t.Errorf("Sum32(%s) = 0x%x want 0x%x", g.in, sum, g.out)
+	const Seed1 uint64 = 0x4FB61A001BDBCC
+	const Seed2 uint64 = 0x804FB61A001BDBCC
+	const Seed3 uint64 = 0x804FB61A801BDBCC
+
+	const TestDataString0Byte = ""
+	const TestDataString1Byte = "af"
+	const TestDataString2Byte = "e70f"
+	const TestDataString3Byte = "37f495"
+	const TestDataString4Byte = "8642dc59"
+	const TestDataString5Byte = "153fb79826"
+	const TestDataString6Byte = "0932e6246c47"
+	const TestDataString7Byte = "ab427ea8d10fc7"
+
+	var tests = []struct {
+		seed uint64
+		in   string
+		out  uint64 // hi << 32 | lo
+	}{
+		{Seed1, TestDataString0Byte, 0x30ED35C100CD3C7D},
+		{Seed1, TestDataString1Byte, 0x48E73FC77D75DDC1},
+		{Seed1, TestDataString2Byte, 0xB5F6E1FC485DBFF8},
+		{Seed1, TestDataString3Byte, 0xF0B07C789B8CF7E8},
+		{Seed1, TestDataString4Byte, 0x7008F2E87E9CF556},
+		{Seed1, TestDataString5Byte, 0xE6C08C6DA2AFA997},
+		{Seed1, TestDataString6Byte, 0x6F04BF1A5EA24060},
+		{Seed1, TestDataString7Byte, 0xE11847E4F0678C41},
+
+		{Seed2, TestDataString0Byte, 0x10A9D5D3996FD65D},
+		{Seed2, TestDataString1Byte, 0x68201F91960EBF91},
+		{Seed2, TestDataString2Byte, 0x64B581631F6AB378},
+		{Seed2, TestDataString3Byte, 0xE1F2DFA6E5131408},
+		{Seed2, TestDataString4Byte, 0x36289D9654FB49F6},
+		{Seed2, TestDataString5Byte, 0xA06114B13464DBD},
+		{Seed2, TestDataString6Byte, 0xD6DD5E40AD1BC2ED},
+		{Seed2, TestDataString7Byte, 0xE203987DBA252FB3},
+
+		{Seed3, "00", 0xA37FB0DA2ECAE06C},
+		{Seed3, "FF", 0xFECEF370701AE054},
+		{Seed3, "00FF", 0xA638E75700048880},
+		{Seed3, "FF00", 0xBDFB46D969730E2A},
+		{Seed3, "FF00FF", 0x9D8577C0FE0D30BF},
+		{Seed3, "00FF00", 0x4F9FBDDE15099497},
+		{Seed3, "00FF00FF", 0x24EAA279D9A529CA},
+		{Seed3, "FF00FF00", 0xD3BEC7726B057943},
+		{Seed3, "FF00FF00FF", 0x920B62BBCA3E0B72},
+		{Seed3, "00FF00FF00", 0x1D7DDF9DFDF3C1BF},
+		{Seed3, "00FF00FF00FF", 0xEC21276A17E821A5},
+		{Seed3, "FF00FF00FF00", 0x6911A53CA8C12254},
+		{Seed3, "FF00FF00FF00FF", 0xFDFD187B1D3CE784},
+		{Seed3, "00FF00FF00FF00", 0x71876F2EFB1B0EE8},
+	}
+
+	for _, tt := range tests {
+		inp, _ := hex.DecodeString(tt.in)
+		want := uint32(tt.out>>32) ^ uint32(tt.out)
+		got := Sum32(tt.seed, inp)
+		if got != want {
+			t.Errorf("Sum32(%x, %q=%x, want %x", tt.seed, tt.in, got, want)
 		}
 	}
 }
