@@ -1,5 +1,5 @@
-//go:build amd64 && !noasm && !tinygo
-// +build amd64,!noasm,!tinygo
+//go:build amd64 && !noasm && !purego
+// +build amd64,!noasm,!purego
 
 package marvin32
 
