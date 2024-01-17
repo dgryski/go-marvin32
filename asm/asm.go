@@ -1,5 +1,3 @@
-// +build ignore
-
 package main
 
 import (
@@ -9,7 +7,6 @@ import (
 )
 
 func update(lo, hi, v Op) {
-
 	if r, ok := v.(Register); ok {
 		ADDL(r, lo)
 	}
@@ -28,7 +25,7 @@ func update(lo, hi, v Op) {
 }
 
 func main() {
-	Package("github.com/dgryski/go-marvin32")
+	ConstraintExpr("amd64,!noasm,!purego")
 	TEXT("Sum32", NOSPLIT, "func(seed uint64, data []byte) uint32")
 	Doc("Sum32 computes the Marvin32 hash of the key")
 
