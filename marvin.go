@@ -1,12 +1,10 @@
 //go:build !amd64 || noasm || purego
-// +build !amd64 noasm purego
 
 package marvin32
 
 import "math/bits"
 
 func Sum32(seed uint64, data []byte) uint32 {
-
 	lo := uint32(seed)
 	hi := uint32(seed >> 32)
 
